@@ -40,8 +40,8 @@ if (isset($_REQUEST['username']) && isset($_REQUEST['password'])) {
     <?php
     }
     ?>
-    <?php echo '<br /> Test' ?>
-    <?= '<br /> Test' ?>
+    <!-- <?php echo '<br /> Test' ?>
+    <?= '<br /> Test' ?> -->
 </body>
 
 </html>
