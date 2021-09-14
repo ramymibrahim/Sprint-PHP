@@ -1,5 +1,4 @@
 <?php
-session_start();
-session_destroy();
-header('Location:index.php');
-die();
+require_once('./config.php');
+require_once(BASE_PATH . '/logic/auth.php');
+logOut();
