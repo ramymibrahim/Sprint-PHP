@@ -11,8 +11,8 @@ function tryLogin($username, $password)
 
 function getUser($username, $password)
 {
-    $sql = "SELECT * FROM users WHERE username='$username' and password = md5('$password') limit 1;";
-    return getRow($sql);
+    $sql = "SELECT * FROM users WHERE username=? and password = md5(?) limit 1;";
+    return getRow($sql,'ss',[$username,$password]);
 }
 
 function addUserToSession($user)

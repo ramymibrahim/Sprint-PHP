@@ -1,5 +1,8 @@
 <?php
 session_start();
+$current_page = 'home';
+if (str_contains($_SERVER['REQUEST_URI'], '/posts.php')) $current_page = 'posts';
+if (str_contains($_SERVER['REQUEST_URI'], '/myposts')) $current_page = 'myposts';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,13 +18,13 @@ session_start();
     <title>Stand CSS Blog by TemplateMo</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
 
     <!-- Additional CSS Files -->
-    <link rel="stylesheet" href="assets/css/fontawesome.css">
-    <link rel="stylesheet" href="assets/css/templatemo-stand-blog.css">
-    <link rel="stylesheet" href="assets/css/owl.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/fontawesome.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/templatemo-stand-blog.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/owl.css">
     <!--
 
 TemplateMo 551 Stand Blog
@@ -56,13 +59,14 @@ https://templatemo.com/tm-551-stand-blog
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="index.php">Home
-                                <span class="sr-only">(current)</span>
+                        <li class="nav-item <?= ($current_page == 'home' ? "active" : "") ?>">
+                            <a class="nav-link" href="<?= BASE_URL . '/' ?>">Home
+                                <?= ($current_page == 'home' ? "<span class='sr-only'>(current)</span>" : "") ?>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="posts.php">Posts</a>
+                        <li class="nav-item <?= ($current_page == 'posts' ? "active" : "") ?>">
+                            <a class="nav-link" href="<?= BASE_URL . '/posts.php' ?>">Posts</a>
+                            <?= ($current_page == 'posts' ? "<span class='sr-only'>(current)</span>" : "") ?>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="contact.php">Contact Us</a>
@@ -79,8 +83,8 @@ https://templatemo.com/tm-551-stand-blog
                             <?php
                             }
                             ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="myposts.php">My Posts</a>
+                            <li class="nav-item <?= ($current_page == 'myposts' ? "active" : "") ?>">
+                                <a class="nav-link" href="<?= BASE_URL . '/myposts' ?>">My Posts</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="logout.php">Logout</a>

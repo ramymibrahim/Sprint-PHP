@@ -8,6 +8,17 @@ $q = isset($_REQUEST['q']) ? $_REQUEST['q'] : null;
 $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
 $page_size = 6;
 $posts = getPosts($page_size, $page, $category_id, $tag_id, null, $q);
+$posts_count  = getPostsCount($category_id, $tag_id, null, $q);
+$page_count = ceil($posts_count / $page_size);
+
+function getUrl($p,$category_id,$tag_id,$q)
+{
+    $url = BASE_URL . "/posts.php?page=$p";
+    if ($category_id != null) $url .= "&category_id=$category_id";
+    if ($tag_id != null) $url .= "&tag_id=$tag_id";
+    if ($q != null) $url .= "&q=$q";
+    return $url;
+}
 ?>
 <?php require_once('layout/header.php'); ?>
 <!-- Page Content -->
@@ -73,7 +84,7 @@ $posts = getPosts($page_size, $page, $category_id, $tag_id, null, $q);
                                                             <?php
                                                             foreach ($post['tags'] as $tag) {
                                                             ?>
-                                                                <li><a href="#"><?= $tag['name'] ?></a></li>
+                                                                <li><a href="<?= BASE_URL."/posts.php?tag_id={$tag['id']}"?>"><?= $tag['name'] ?></a></li>
                                                             <?php
                                                             }
                                                             ?>
@@ -92,6 +103,23 @@ $posts = getPosts($page_size, $page, $category_id, $tag_id, null, $q);
                         }
                         ?>
 
+                    </div>
+                    <div class="col-lg-12">
+                        <ul class="page-numbers">
+                            <?php
+                            $prevUrl = getUrl($page - 1,$category_id,$tag_id,$q);
+                            $nxtUrl = getUrl($page + 1,$category_id,$tag_id,$q);
+
+                            if ($page > 1) echo "<li><a href='{$prevUrl}'><i class='fa fa-angle-double-left'></i></a></li>";
+
+                            for ($i = 1; $i <= $page_count; $i++) {
+                                $url = getUrl($i,$category_id,$tag_id,$q);
+                                echo "<li class=" . ($i == $page ? "active" : "") . "><a href='{$url}'>{$i}</a></li>";
+                            }
+                            
+                            if ($page < $page_count) echo "<li><a href='{$nxtUrl}'><i class='fa fa-angle-double-right'></i></a></li>";
+                            ?>
+                        </ul>
                     </div>
                 </div>
             </div>
