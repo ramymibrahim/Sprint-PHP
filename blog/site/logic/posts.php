@@ -9,7 +9,8 @@ function getPosts(
     $user_id = null,
     $q = null,
     $order_field = "publish_date",
-    $order_by = "desc"
+    $order_by = "desc",
+    $like_by_user_id = null
 ) {
 
     $offset = ($page - 1) * $page_size;
@@ -28,11 +29,21 @@ function getPosts(
     for ($i = 0; $i < count($posts); $i++) {
         $posts[$i]['comments'] = getPostCommentsCount($posts[$i]['id']);
         $posts[$i]['tags'] = getPostTags($posts[$i]['id']);
+        $posts[$i]['likes_count'] = getLikesCount($posts[$i]['id']);
+        if ($like_by_user_id) {
+            $posts[$i]['liked_by_me'] = getIfLikedByMe($posts[$i]['id'], $like_by_user_id);
+        } else
+            $posts[$i]['liked_by_me'] = false;
     }
 
     return $posts;
 }
 
+function getIfLikedByMe($post_id, $user_id)
+{
+    $sql = "SELECT id FROM likes WHERE post_id=? and user_id=?";
+    return getRow($sql, 'ii', [$post_id, $user_id]) != null;
+}
 function getPostsCount($category_id = null, $tag_id = null, $user_id = null, $q = null)
 {
     $sql = "SELECT count(0) as cnt FROM posts p
@@ -87,6 +98,13 @@ function getPostCommentsCount($postId)
     if ($result == null) return 0;
     return $result['cnt'];
 }
+function getLikesCount($postId)
+{
+    $sql = "SELECT COUNT(0) as cnt FROM likes WHERE post_id=$postId";
+    $result = getRow($sql);
+    if ($result == null) return 0;
+    return $result['cnt'];
+}
 
 function getPostTags($postId)
 {
@@ -114,20 +132,88 @@ function addNewPost($request, $user_id, $image)
         $user_id
     ]);
     if ($post_id) {
-        if (isset($request['tags'])) {
-            foreach ($request['tags'] as $tag_id) {
-                addData(
-                    "INSERT INTO post_tags (post_id,tag_id) VALUES (?,?)",
-                    'ii',[$post_id,$tag_id]
-                );
-            }
-        }
+        addTags($request, $post_id);
         return true;
     }
     return false;
 }
 function getUploadedImage($files)
 {
-    move_uploaded_file($files['image']['tmp_name'],BASE_PATH.'/post_images/'.$files['image']['name']);
+    move_uploaded_file($files['image']['tmp_name'], BASE_PATH . '/post_images/' . $files['image']['name']);
     return $files['image']['name'];
+}
+
+function getPostById($id)
+{
+    $sql = "SELECT * FROM posts WHERE id=?";
+    $post = getRow($sql, 'i', [$id]);
+    $sql = "SELECT tag_id FROM post_tags WHERE post_id=?";
+    $post['tags'] = getRows($sql, 'i', [$id]);
+    return $post;
+}
+
+function checkIfUserCanEditPost($post)
+{
+    if (session_status() != PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+    if (!isset($_SESSION['user']))
+        return false;
+    return $_SESSION['user']['type'] == 1 || $_SESSION['user']['id'] == $post['user_id'];
+}
+
+function validatePostEdit($request)
+{
+    return validatePostCreate($request);
+}
+
+function editPost($id, $request, $image)
+{
+    $types = 'sssi';
+    $vals = [$request['title'], $request['content'], $request['publish_date'], $request['category_id']];
+    $sql = "UPDATE posts SET title=?,content=?,publish_date=?,category_id=?";
+    if ($image) {
+        $types .= 's';
+        $sql .= ",image=?";
+        array_push($vals, $image);
+    }
+    $sql .= " WHERE id=?";
+    $types .= 'i';
+    array_push($vals, $id);
+    if (editData($sql, $types, $vals)) {
+        $sql = "DELETE FROM post_tags WHERE post_id=?";
+        execute($sql, 'i', [$id]);
+        addTags($request, $id);
+        return true;
+    }
+    return false;
+}
+
+function addTags($request, $post_id)
+{
+    if (isset($request['tags'])) {
+        foreach ($request['tags'] as $tag_id) {
+            addData(
+                "INSERT INTO post_tags (post_id,tag_id) VALUES (?,?)",
+                'ii',
+                [$post_id, $tag_id]
+            );
+        }
+    }
+}
+
+function deletePost($id)
+{
+    $sql = "DELETE FROM posts WHERE id=?";
+    execute($sql, 'i', [$id]);
+}
+function likePost($id, $user_id)
+{
+    $sql = "INSERT INTO likes (id,post_id,user_id) VALUES (null,?,?)";
+    execute($sql, 'ii', [$id, $user_id]);
+}
+function unlikePost($id, $user_id)
+{
+    $sql = "DELETE FROM likes WHERE post_id=? AND user_id=?";
+    execute($sql, 'ii', [$id, $user_id]);
 }

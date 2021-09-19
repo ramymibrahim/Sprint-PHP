@@ -1,0 +1,6 @@
+Implement the following user stories
+As	Admin	I can view, sort, filter and paginate all posts
+As	Admin	I can delete posts
+As	Admin	I can block user
+As	Admin	I can unblock user
+As	Admin	I can remove user

@@ -1,6 +1,7 @@
 <?php
 require_once('../config.php');
 require_once(BASE_PATH . '/logic/posts.php');
+require_once(BASE_PATH . '/logic/auth.php');
 require_once(BASE_PATH . '/layout/header.php');
 $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
 $page_size = 10;
@@ -31,12 +32,6 @@ function getSortFlag($field, $oldOrderField, $oldOrderBy)
         return "<i class='fa fa-sort-down'></i>";
     }
     return  "";
-}
-function getUserId()
-{
-    if (session_status() != PHP_SESSION_ACTIVE) session_start();
-    if (isset($_SESSION['user'])) return $_SESSION['user']['id'];
-    return 0;
 }
 
 $posts = getMyPosts($page_size, $page, getUserId(), $q, $order_field, $order_by);
@@ -92,7 +87,7 @@ $posts = ['data'=>[],'count'=>100,'order_field'=>'title','order_by'=>'asc']
                             </thead>
                             <tbody>
                                 <?php
-                                $i = 1;
+                                $i = ($page - 1) * $page_size+1;
                                 foreach ($posts['data'] as $post) {
                                     $tags = '';
                                     foreach ($post['tags'] as $tag) {

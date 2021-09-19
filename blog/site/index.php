@@ -1,9 +1,10 @@
 <?php
 require_once('config.php');
 require_once(BASE_PATH . '/logic/posts.php');
+require_once(BASE_PATH . '/logic/auth.php');
 require_once(BASE_PATH . '/logic/categories.php');
 require_once(BASE_PATH . '/logic/tags.php');
-$posts = getPosts(4);
+$posts = getPosts(4,1,null,null,null,null,'publish_date','desc',getUserId());
 $categories = getCategories();
 $tags = getTags();
 ?>
@@ -136,46 +137,7 @@ $tags = getTags();
             foreach ($posts as $post) {
             ?>
               <div class="col-lg-12">
-                <div class="blog-post">
-                  <div class="blog-thumb">
-                    <img src="<?= BASE_URL . $post['image'] ?>" alt="">
-                  </div>
-                  <div class="down-content">
-                    <span><?= $post['category_name'] ?></span>
-                    <a href="<?= BASE_URL . '/post-details.php?id=' . $post['id'] ?>">
-                      <h4><?= $post['title'] ?></h4>
-                    </a>
-                    <ul class="post-info">
-                      <li><a href="#"><?= $post['user_name'] ?></a></li>
-                      <li><a href="#"><?= $post['publish_date'] ?></a></li>
-                      <li><a href="#"><?= $post['comments'] ?> Comments</a></li>
-                    </ul>
-                    <p><?= $post['content'] ?></p>
-                    <?php
-                    if ($post['tags']) {
-                    ?>
-                      <div class="post-options">
-                        <div class="row">
-                          <div class="col-6">
-                            <ul class="post-tags">
-                              <li><i class="fa fa-tags"></i></li>
-                              <?php
-                              foreach ($post['tags'] as $tag) {
-                              ?>
-                                <li><a href="<?= BASE_URL . '/posts.php?tag_id=' . $tag['id'] ?>"><?= $tag['name'] ?></a></li>
-                              <?php
-                              }
-                              ?>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    <?php
-                    }
-                    ?>
-
-                  </div>
-                </div>
+                <?php include(BASE_PATH . '/views/posts-view.php') ?>
               </div>
             <?php
             }

@@ -1,5 +1,6 @@
 <?php
 require_once(BASE_PATH . '/dal/basic_dal.php');
+require_once(BASE_PATH . '/logic/auth.php');
 function tryLogin($username, $password)
 {
     $user = getUser($username, $password);
@@ -30,4 +31,10 @@ function logOut()
     session_destroy();
     header('Location:' . BASE_URL . '/index.php');
     die();
+}
+function getUserId()
+{
+    if (session_status() != PHP_SESSION_ACTIVE) session_start();
+    if (isset($_SESSION['user'])) return $_SESSION['user']['id'];
+    return 0;
 }

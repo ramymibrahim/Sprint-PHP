@@ -38,6 +38,16 @@ function getRow($sql, $types = null, $vals = null)
 
 function addData($sql, $types, $vals)
 {
+    return execute($sql, $types, $vals, true);
+}
+
+function editData($sql, $types, $vals)
+{
+    return execute($sql, $types, $vals);
+}
+
+function execute($sql, $types, $vals, $returnLastId = false)
+{
     $conn = getConnection();
     if ($conn) {
         if ($types && $vals) {
@@ -49,13 +59,12 @@ function addData($sql, $types, $vals)
             mysqli_query($conn, $sql);
         }
     }
-    $lastId = mysqli_insert_id($conn);
+    if ($returnLastId)
+        $lastId = mysqli_insert_id($conn);
     mysqli_close($conn);
-    return $lastId;
-}
-
-function editData($sql)
-{
+    if (isset($lastId))
+        return $lastId;
+    return 1;
 }
 
 function deleteData($sql)

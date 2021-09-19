@@ -1,5 +1,6 @@
 <?php
-session_start();
+if (session_status() != PHP_SESSION_ACTIVE)
+    session_start();
 $current_page = 'home';
 if (str_contains($_SERVER['REQUEST_URI'], '/posts.php')) $current_page = 'posts';
 if (str_contains($_SERVER['REQUEST_URI'], '/myposts')) $current_page = 'myposts';

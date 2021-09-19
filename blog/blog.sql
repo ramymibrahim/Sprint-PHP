@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 09, 2021 at 09:59 PM
+-- Generation Time: Sep 19, 2021 at 10:06 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.10
 
@@ -90,7 +90,7 @@ CREATE TABLE `follows` (
 
 CREATE TABLE `likes` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `like_date` datetime NOT NULL,
+  `like_date` datetime NOT NULL DEFAULT current_timestamp(),
   `post_id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -100,9 +100,12 @@ CREATE TABLE `likes` (
 --
 
 INSERT INTO `likes` (`id`, `like_date`, `post_id`, `user_id`) VALUES
-(1, '2021-09-09 20:46:05', 3, 5),
-(2, '2021-09-09 20:46:12', 3, 6),
-(3, '2021-09-09 20:46:23', 4, 5);
+(30, '2021-09-19 22:00:36', 7, 5),
+(31, '2021-09-19 22:00:37', 8, 5),
+(32, '2021-09-19 22:00:39', 9, 5),
+(33, '2021-09-19 22:00:40', 10, 5),
+(34, '2021-09-19 22:01:46', 7, 6),
+(36, '2021-09-19 22:02:08', 8, 6);
 
 -- --------------------------------------------------------
 
@@ -114,6 +117,7 @@ CREATE TABLE `posts` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `title` varchar(1000) NOT NULL,
   `content` longtext NOT NULL,
+  `image` varchar(1000) NOT NULL,
   `publish_date` datetime NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT NULL,
@@ -125,9 +129,19 @@ CREATE TABLE `posts` (
 -- Dumping data for table `posts`
 --
 
-INSERT INTO `posts` (`id`, `title`, `content`, `publish_date`, `created_at`, `updated_at`, `category_id`, `user_id`) VALUES
-(3, 'Title1', 'Content1', '2021-09-09 20:25:43', '2021-09-09 20:26:09', NULL, 1, 6),
-(4, 'Title2', 'Content2', '2021-09-09 20:25:43', '2021-09-09 20:26:09', NULL, 2, 6);
+INSERT INTO `posts` (`id`, `title`, `content`, `image`, `publish_date`, `created_at`, `updated_at`, `category_id`, `user_id`) VALUES
+(7, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-09 20:26:09', NULL, 1, 5),
+(8, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-09 20:26:09', NULL, 1, 5),
+(9, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-09 20:26:09', NULL, 1, 5),
+(10, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-09 20:26:09', NULL, 1, 5),
+(11, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-16 21:44:32', NULL, 1, 5),
+(12, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-16 21:45:15', NULL, 1, 5),
+(13, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-16 21:53:17', NULL, 1, 5),
+(14, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-16 21:54:15', NULL, 1, 5),
+(15, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-16 21:55:15', NULL, 1, 5),
+(16, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-16 21:57:10', NULL, 1, 5),
+(17, 'Title2r', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-16 21:57:46', NULL, 1, 5),
+(19, 'Title2r1111', 'Content2r', 'gallery_1238251741.jpg', '2021-09-14 00:00:00', '2021-09-16 22:07:02', NULL, 1, 5);
 
 -- --------------------------------------------------------
 
@@ -140,6 +154,18 @@ CREATE TABLE `post_tags` (
   `tag_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `post_tags`
+--
+
+INSERT INTO `post_tags` (`post_id`, `tag_id`) VALUES
+(17, 1),
+(17, 2),
+(17, 3),
+(17, 4),
+(19, 2),
+(19, 4);
+
 -- --------------------------------------------------------
 
 --
@@ -150,6 +176,16 @@ CREATE TABLE `tags` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `tags`
+--
+
+INSERT INTO `tags` (`id`, `name`) VALUES
+(1, 'Ahly'),
+(2, 'Zamalek'),
+(3, 'Egypt'),
+(4, 'Sudan');
 
 -- --------------------------------------------------------
 
@@ -164,16 +200,23 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `phone` varchar(50) DEFAULT NULL,
-  `type` tinyint(4) NOT NULL DEFAULT 0
+  `type` tinyint(4) NOT NULL DEFAULT 0,
+  `active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `username`, `password`, `email`, `phone`, `type`) VALUES
-(5, 'Ramy Ibrahim', 'ramy', '202cb962ac59075b964b07152d234b70', 'ramymibrahim@yahoo.com', NULL, 1),
-(6, 'ahmed mohamed', 'ahmed.mohamed', '202cb962ac59075b964b07152d234b70', 'ahmed.mohamed@yahoo.com', '01000000000', 0);
+INSERT INTO `users` (`id`, `name`, `username`, `password`, `email`, `phone`, `type`, `active`) VALUES
+(5, 'Ramy Ibrahim', 'ramy', '202cb962ac59075b964b07152d234b70', 'ramymibrahim@yahoo.com', NULL, 1, 1),
+(6, 'ahmed mohamed', 'ahmed.mohamed', '202cb962ac59075b964b07152d234b70', 'ahmed.mohamed@yahoo.com', '01000000000', 0, 1),
+(7, 'asd', 'sad', '202cb962ac59075b964b07152d234b70', 'asd@66asd.com', 'asd', 0, 1),
+(11, 'asd', 'sad', '202cb962ac59075b964b07152d234b70', 'asd5@asd.com', 'asd', 0, 1),
+(13, 'asd', 'sad', '202cb962ac59075b964b07152d234b70', 'asd@a22sd.com', 'asd', 0, 1),
+(15, 'asd', 'sad', '202cb962ac59075b964b07152d234b70', 'd', 'asd', 0, 1),
+(16, 'asd', 'sad', '202cb962ac59075b964b07152d234b70', 'asd@asd.com', 'asd', 0, 1),
+(18, 'asd', 'sad', '202cb962ac59075b964b07152d234b70', 'asd@asd111.com', 'asd', 0, 1);
 
 --
 -- Indexes for dumped tables
@@ -267,7 +310,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `comment_likes`
@@ -285,25 +328,25 @@ ALTER TABLE `follows`
 -- AUTO_INCREMENT for table `likes`
 --
 ALTER TABLE `likes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- Constraints for dumped tables
