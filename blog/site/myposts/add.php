@@ -8,6 +8,8 @@ require_once(BASE_PATH . '/logic/categories.php');
 $tags = getTags();
 $categories = getCategories();
 if (isset($_REQUEST['title'])) {
+    
+    $_REQUEST['title'] = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS);
     $errors = validatePostCreate($_REQUEST);
     if (count($errors) == 0) {
 

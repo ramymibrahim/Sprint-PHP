@@ -73,6 +73,15 @@ $posts = ['data'=>[],'count'=>100,'order_field'=>'title','order_by'=>'asc']
                                 </form>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6"> <a class="btn btn-primary" href="export.php" target="_blank">Export</a></div>
+                            <div class="col-md-6">
+                                <form action="import.php" method="POST" enctype="multipart/form-data">
+                                    <button class="btn btn-primary">Import</button>
+                                    <input type="file" name="csv" style="width: 100px;display:inline" />
+                                </form>
+                            </div>
+                        </div>
                         <table class="table">
                             <thead>
                                 <tr>
@@ -87,7 +96,7 @@ $posts = ['data'=>[],'count'=>100,'order_field'=>'title','order_by'=>'asc']
                             </thead>
                             <tbody>
                                 <?php
-                                $i = ($page - 1) * $page_size+1;
+                                $i = ($page - 1) * $page_size + 1;
                                 foreach ($posts['data'] as $post) {
                                     $tags = '';
                                     foreach ($post['tags'] as $tag) {
@@ -96,7 +105,7 @@ $posts = ['data'=>[],'count'=>100,'order_field'=>'title','order_by'=>'asc']
                                     $img_src = BASE_URL . '/post_images/' . $post['image'];
                                     echo "<tr>
                                     <td>$i</td>
-                                    <td>{$post['title']}</td>
+                                    <td>" . htmlspecialchars($post['title']) . "</td>
                                     <td>{$post['category_name']}</td>
                                     <td>{$tags}</td>
                                     <td><img src='{$img_src}' width='200' height='200'/></td>

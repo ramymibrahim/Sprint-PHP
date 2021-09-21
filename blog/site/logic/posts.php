@@ -139,8 +139,12 @@ function addNewPost($request, $user_id, $image)
 }
 function getUploadedImage($files)
 {
-    move_uploaded_file($files['image']['tmp_name'], BASE_PATH . '/post_images/' . $files['image']['name']);
-    return $files['image']['name'];
+    $strArr = explode('.', $files['image']['name']);
+    $ext = $strArr[count($strArr) - 1];
+    array_pop($strArr);
+    $fileName = implode('.', $strArr) . '_' . strtotime("now") . '.' . $ext;
+    move_uploaded_file($files['image']['tmp_name'], BASE_PATH . '/post_images/' . $fileName);
+    return $fileName;
 }
 
 function getPostById($id)
